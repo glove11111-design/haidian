@@ -3,12 +3,16 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   base: './',
   server: {
-    host: true,
+    host: '0.0.0.0',
     port: 5173,
     strictPort: true,
+    allowedHosts: true,
+    cors: true,
   },
   preview: {
-    host: true,
+    host: '0.0.0.0',
     port: 4173,
+    allowedHosts: true,
+    cors: true,
   },
 });

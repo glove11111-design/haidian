@@ -32,7 +32,19 @@ const clipLabel = document.querySelector('#clip-label');
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 500);
-const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+} catch (err) {
+  const fallback = document.createElement('p');
+  fallback.className = 'hint';
+  fallback.style.position = 'absolute';
+  fallback.style.left = '24px';
+  fallback.style.bottom = '72px';
+  fallback.textContent = `WebGL 无法启动：${err?.message || err}`;
+  viewport.appendChild(fallback);
+  throw err;
+}
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;

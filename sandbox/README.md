@@ -14,7 +14,7 @@ npm install
 npm run dev
 ```
 
-浏览器打开终端提示的地址（默认 [http://localhost:5173](http://localhost:5173)）。
+开发服务绑定 `0.0.0.0:5173`（所有网卡），浏览器打开终端提示的地址。本机用 [http://localhost:5173](http://localhost:5173)；云端预览用同一端口，不要只访问 `127.0.0.1` 以外的未转发地址。
 
 打包为静态站点：
 
