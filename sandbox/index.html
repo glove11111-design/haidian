@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>数字沙盘 · 建筑单体</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <div id="viewport"></div>
+      <div id="labels"></div>
+
+      <header class="topbar">
+        <div class="brand">
+          <p class="eyebrow">Digital Sandbox</p>
+          <h1>数字沙盘</h1>
+          <p class="subtitle" id="model-source">演示体量 · 米制</p>
+        </div>
+        <div class="env">
+          <label for="tod">日照</label>
+          <input id="tod" type="range" min="6" max="18" step="0.1" value="10" />
+          <span id="tod-label">10:00</span>
+        </div>
+      </header>
+
+      <nav class="tools" aria-label="工具">
+        <button type="button" class="tool is-active" data-tool="select" title="选择">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3l6 16 2.2-6.8L20 10 5 3z" /></svg>
+          <span>选择</span>
+        </button>
+        <button type="button" class="tool" data-tool="measure" title="测距">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18V6m16 12V6M4 12h16M7 10v4m3-4v4m3-4v4m3-4v4" /></svg>
+          <span>测距</span>
+        </button>
+        <button type="button" class="tool" data-tool="annotate" title="标注">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.2 7-11.2A7 7 0 0 0 5 9.8C5 14.8 12 21 12 21zm0-8.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" /></svg>
+          <span>标注</span>
+        </button>
+        <button type="button" class="tool" data-action="section" title="剖切">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h16M18 9l3 3-3 3" /></svg>
+          <span>剖切</span>
+        </button>
+        <button type="button" class="tool" data-action="reset" title="重置视角">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.7M4 4v5h5" /></svg>
+          <span>重置</span>
+        </button>
+        <button type="button" class="tool" data-action="import" title="导入 GLB">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v10m0 0 4-4m-4 4-4-4M5 18h14" /></svg>
+          <span>导入</span>
+        </button>
+      </nav>
+
+      <div class="section-dock hidden" id="section-dock">
+        <label for="clip">剖切高度</label>
+        <input id="clip" type="range" min="0" max="20" step="0.05" value="20" />
+        <span id="clip-label">关</span>
+        <div class="segmented">
+          <button type="button" class="is-active" data-clip-axis="y">水平</button>
+          <button type="button" data-clip-axis="x">竖直</button>
+        </div>
+      </div>
+
+      <aside class="panel" id="panel">
+        <p class="panel-kicker">房间信息</p>
+        <h2 id="panel-title">点击体块查看</h2>
+        <p class="panel-lead" id="panel-lead">
+          选择房间后，这里会显示名称、楼层和占位属性。也可在场景中测距、剖切或钉标注。
+        </p>
+        <dl id="panel-fields" class="hidden"></dl>
+        <div class="panel-edit hidden" id="panel-edit">
+          <label>功能 <input id="attr-function" type="text" /></label>
+          <label>备注 <textarea id="attr-notes" rows="3"></textarea></label>
+        </div>
+      </aside>
+
+      <div class="floors" id="floors"></div>
+
+      <p class="hint" id="hint">拖拽旋转 · 右键平移 · 滚轮缩放 · 可将 GLB 拖入窗口替换模型</p>
+      <div id="toast" class="toast hidden"></div>
+      <div id="drop-veil" class="drop-veil hidden"><p>松开以替换建筑模型</p></div>
+      <input id="file" class="sr-only" type="file" accept=".glb,model/gltf-binary" />
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
