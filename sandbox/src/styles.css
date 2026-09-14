@@ -63,7 +63,7 @@ body,
 .topbar {
   top: 22px;
   left: 22px;
-  right: 22px;
+  right: 344px;
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
@@ -394,6 +394,10 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 @media (max-width: 900px) {
+  .topbar {
+    right: 22px;
+  }
+
   .panel {
     width: min(300px, calc(100% - 44px));
     max-height: 36vh;

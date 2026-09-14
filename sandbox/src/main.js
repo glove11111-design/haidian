@@ -55,6 +55,11 @@ controls.screenSpacePanning = true;
 controls.maxPolarAngle = Math.PI * 0.49;
 controls.minDistance = 6;
 controls.maxDistance = 140;
+controls.mouseButtons.LEFT = THREE.MOUSE.ROTATE;
+controls.mouseButtons.MIDDLE = THREE.MOUSE.PAN;
+controls.mouseButtons.RIGHT = THREE.MOUSE.PAN;
+controls.listenToKeyEvents(window);
+renderer.domElement.addEventListener('contextmenu', (event) => event.preventDefault());
 
 const hemi = new THREE.HemisphereLight(0xf3efe6, 0x8a8478, 0.7);
 scene.add(hemi);
@@ -348,7 +353,7 @@ function setTool(tool) {
     btn.classList.toggle('is-active', btn.dataset.tool === tool);
   });
   const hints = {
-    select: '拖拽旋转 · 右键平移 · 滚轮缩放 · 点击房间查看信息',
+    select: '拖拽旋转 · 右键或中键平移 · 滚轮缩放 · 方向键平移 · 点击房间查看信息',
     measure: '测距：在模型上依次点击两点。再点一次开始新的测量。',
     annotate: '标注：点击表面放置图钉，可在侧栏改写说明。',
   };
