@@ -204,7 +204,7 @@ function materialsOf(mesh) {
 function applyClipping(root) {
   const planes = state.sectionOn ? [clipPlane] : [];
   root?.traverse((obj) => {
-    if (!obj.isMesh) return;
+    if (!obj.isMesh && !obj.isLine) return;
     for (const m of materialsOf(obj)) {
       m.clippingPlanes = planes;
       m.clipShadows = true;
