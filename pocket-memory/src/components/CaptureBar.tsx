@@ -26,7 +26,7 @@ export function CaptureLayer({
 }) {
   if (!visible) return null;
   return (
-    <View style={s.overlay} pointerEvents="box-none">
+    <View style={s.overlay}>
       <Pressable style={s.dim} onPress={onClose} />
       <View style={s.sheet}>
         <View style={s.head}>
