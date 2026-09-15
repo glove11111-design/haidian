@@ -1,0 +1,51 @@
+{
+  "expo": {
+    "name": "口袋记忆",
+    "slug": "pocket-memory",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "pocket-memory",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "app.pocketmemory.v1",
+      "infoPlist": {
+        "NSCameraUsageDescription": "用来拍照和录像，立刻收进口袋记忆。",
+        "NSMicrophoneUsageDescription": "用来录音，立刻收进口袋记忆。",
+        "NSPhotoLibraryUsageDescription": "从相册选图和视频，立刻收进口袋记忆。"
+      }
+    },
+    "android": {
+      "package": "app.pocketmemory.v1",
+      "adaptiveIcon": {
+        "backgroundColor": "#FFFFFF",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-video",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "用来录音，立刻收进口袋记忆。"
+        }
+      ],
+      "expo-image",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "从相册选图和视频，立刻收进口袋记忆。",
+          "cameraPermission": "用来拍照和录像，立刻收进口袋记忆。"
+        }
+      ]
+    ]
+  }
+}
