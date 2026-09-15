@@ -1,0 +1,11 @@
+{
+  "name": "pocket-memory-launcher",
+  "private": true,
+  "description": "口袋记忆在 pocket-memory/。仓库根目录请用 npm start，或 npx expo start pocket-memory。",
+  "scripts": {
+    "start": "npm start --prefix pocket-memory --",
+    "web": "npm run web --prefix pocket-memory --",
+    "android": "npm run android --prefix pocket-memory --",
+    "ios": "npm run ios --prefix pocket-memory --"
+  }
+}

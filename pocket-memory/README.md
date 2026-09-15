@@ -4,6 +4,18 @@ iPhone 私人灵感收件箱 v1。文字 / 图 / 视频 / 音频 / 链接五种�
 
 ## 运行
 
+`package.json` 在 **pocket-memory/** 里。在仓库根目录直接 `npx expo start` 会报 package.json does not exist。
+
+仓库根目录：
+
+```bash
+npm start
+# 或
+npx expo start pocket-memory
+```
+
+进入应用目录：
+
 ```bash
 cd pocket-memory
 npm install
