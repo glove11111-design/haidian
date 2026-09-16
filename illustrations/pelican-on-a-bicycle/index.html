@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>鹈鹕骑自行车</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #2b241c;
+      --muted: #6d6256;
+      --paper: #f6ecd7;
+      --frame: #efe3c8;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+    }
+    body {
+      font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Songti SC", "Noto Serif SC", serif;
+      background:
+        radial-gradient(1200px 600px at 50% -10%, #fff8ea, transparent 55%),
+        linear-gradient(180deg, #e7f1f4 0%, var(--paper) 48%, #e2c992 100%);
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 20px 48px;
+    }
+    main {
+      width: min(1080px, 100%);
+    }
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      margin: 0 0 8px;
+    }
+    p {
+      margin: 0;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      font-size: 14px;
+    }
+    figure {
+      margin: 0;
+      background: var(--frame);
+      border-radius: 28px;
+      padding: 18px;
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.7) inset,
+        0 24px 50px rgba(90, 70, 40, 0.18);
+    }
+    object {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1200 / 800;
+      border-radius: 16px;
+      background: #6BA8D1;
+    }
+    footer {
+      margin-top: 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: 0.04em;
+    }
+    a {
+      color: inherit;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>鹈鹕骑自行车</h1>
+      <p>纯 SVG 插画 · 翅膀当车把 · 蹼足踩踏板</p>
+    </header>
+    <figure>
+      <object type="image/svg+xml" data="pelican-bicycle.svg" title="一只白色鹈鹕骑着复古自行车沿海岸前进">
+        浏览器无法显示 SVG，请直接打开 <a href="pelican-bicycle.svg">pelican-bicycle.svg</a>。
+      </object>
+    </figure>
+    <footer>可缩放矢量文件：<a href="pelican-bicycle.svg">pelican-bicycle.svg</a></footer>
+  </main>
+</body>
+</html>
