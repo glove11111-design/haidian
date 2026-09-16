@@ -64,9 +64,11 @@ export function MixedCard({
           </MediaBox>
           <View style={s.metaRow}>
             <CatChip item={item} onPress={onCategory} />
-            <Text style={s.oneLine} numberOfLines={1}>
-              {item.caption || item.text || ''}
-            </Text>
+            {item.note || item.caption || item.text ? (
+              <Text style={s.oneLine} numberOfLines={1}>
+                {item.note || item.caption || item.text}
+              </Text>
+            ) : null}
           </View>
         </>
       )}
@@ -93,7 +95,7 @@ export function MixedCard({
           <View style={s.videoMeta}>
             <CatChip item={item} onPress={onCategory} />
             <Text style={s.body} numberOfLines={2}>
-              {item.caption || item.title || (item.videoKind === 'own' ? '自己录的一段' : '信息流视频')}
+              {item.note || item.caption || item.title || (item.videoKind === 'own' ? '自己录的一段' : '信息流视频')}
             </Text>
             <Text style={s.quiet}>{item.author || formatWhen(item.createdAt)}</Text>
           </View>
@@ -142,6 +144,11 @@ export function MixedCard({
               {[item.author, item.sourceApp].filter(Boolean).join(' · ')}
             </Text>
           ) : null}
+          {item.note ? (
+            <Text style={s.quiet} numberOfLines={1}>
+              {item.note}
+            </Text>
+          ) : null}
         </>
       )}
     </Pressable>
@@ -178,6 +185,11 @@ export function GalleryTile({
         {item.imageCount && item.imageCount > 1 ? (
           <View style={s.badge}>
             <Text style={s.badgeText}>{item.imageCount}</Text>
+          </View>
+        ) : null}
+        {item.note ? (
+          <View style={s.noteBadge}>
+            <Text style={s.badgeText}>备</Text>
           </View>
         ) : null}
         <View style={s.chipOnMedia}>
@@ -261,6 +273,11 @@ export function LinkCard({
       </View>
       {item.author || item.sourceApp ? (
         <Text style={s.quiet}>{[item.author, item.sourceApp].filter(Boolean).join(' · ')}</Text>
+      ) : null}
+      {item.note ? (
+        <Text style={s.quiet} numberOfLines={1}>
+          {item.note}
+        </Text>
       ) : null}
     </Pressable>
   );
@@ -349,6 +366,15 @@ const s = StyleSheet.create({
   dur: {
     position: 'absolute',
     top: 8,
+    right: 8,
+    backgroundColor: colors.ink,
+    borderRadius: 999,
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+  },
+  noteBadge: {
+    position: 'absolute',
+    bottom: 8,
     right: 8,
     backgroundColor: colors.ink,
     borderRadius: 999,

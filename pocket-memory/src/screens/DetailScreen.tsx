@@ -58,11 +58,17 @@ export function DetailScreen({
       )}
       <ScrollView contentContainerStyle={s.body}>
         {item.type === 'text' && <TextBody item={item} onChange={(text) => void updateItem(item.id, { text })} />}
-        {item.type === 'image' && <ImageBody item={item} />}
-        {item.type === 'video' && item.videoKind === 'own' && <OwnVideoBody item={item} />}
-        {item.type === 'video' && item.videoKind !== 'own' && <SocialBody item={item} openLabel="打开原帖" />}
+        {item.type === 'image' && <ImageBody item={item} onNote={(note) => void updateItem(item.id, { note })} />}
+        {item.type === 'video' && item.videoKind === 'own' && (
+          <OwnVideoBody item={item} onNote={(note) => void updateItem(item.id, { note })} />
+        )}
+        {item.type === 'video' && item.videoKind !== 'own' && (
+          <SocialBody item={item} openLabel="打开原帖" onNote={(note) => void updateItem(item.id, { note })} />
+        )}
         {item.type === 'audio' && <AudioBody item={item} />}
-        {item.type === 'link' && <SocialBody item={item} openLabel="打开网页" />}
+        {item.type === 'link' && (
+          <SocialBody item={item} openLabel="打开网页" onNote={(note) => void updateItem(item.id, { note })} />
+        )}
       </ScrollView>
     </View>
   );
@@ -81,7 +87,25 @@ function TextBody({ item, onChange }: { item: MemoryItem; onChange: (text: strin
   );
 }
 
-function ImageBody({ item }: { item: MemoryItem }) {
+function NoteField({ value, onChange }: { value?: string; onChange: (note: string) => void }) {
+  const [note, setNote] = useState(value ?? '');
+  return (
+    <View style={{ gap: 6 }}>
+      <Text style={s.meta}>备注</Text>
+      <TextInput
+        value={note}
+        onChangeText={setNote}
+        onBlur={() => onChange(note.trim())}
+        placeholder="为什么收下，免得以后忘"
+        placeholderTextColor={colors.muted}
+        multiline
+        style={s.note}
+      />
+    </View>
+  );
+}
+
+function ImageBody({ item, onNote }: { item: MemoryItem; onNote: (note: string) => void }) {
   const uris = [item.mediaUri || item.coverUri, ...(item.extraImageUris ?? [])].filter(Boolean) as string[];
   return (
     <View style={{ gap: 12 }}>
@@ -94,16 +118,27 @@ function ImageBody({ item }: { item: MemoryItem }) {
           {item.author} {item.sourceApp ? `来自${item.sourceApp}` : ''}
         </Text>
       ) : null}
+      <NoteField value={item.note} onChange={onNote} />
       {item.parseIncomplete ? <Incomplete item={item} /> : null}
     </View>
   );
 }
 
-function OwnVideoBody({ item }: { item: MemoryItem }) {
+function OwnVideoBody({ item, onNote }: { item: MemoryItem; onNote: (note: string) => void }) {
   if (!item.mediaUri) {
-    return <Text style={s.meta}>成片在本机，打开设备后可播。</Text>;
+    return (
+      <View style={{ gap: 12 }}>
+        <Text style={s.meta}>成片在本机，打开设备后可播。</Text>
+        <NoteField value={item.note} onChange={onNote} />
+      </View>
+    );
   }
-  return <OwnVideoPlayer uri={item.mediaUri} durationMs={item.durationMs} />;
+  return (
+    <View style={{ gap: 12 }}>
+      <OwnVideoPlayer uri={item.mediaUri} durationMs={item.durationMs} />
+      <NoteField value={item.note} onChange={onNote} />
+    </View>
+  );
 }
 
 function OwnVideoPlayer({ uri, durationMs }: { uri: string; durationMs?: number }) {
@@ -126,7 +161,15 @@ function OwnVideoPlayer({ uri, durationMs }: { uri: string; durationMs?: number 
   );
 }
 
-function SocialBody({ item, openLabel }: { item: MemoryItem; openLabel: string }) {
+function SocialBody({
+  item,
+  openLabel,
+  onNote,
+}: {
+  item: MemoryItem;
+  openLabel: string;
+  onNote: (note: string) => void;
+}) {
   const open = () => {
     if (item.url) void Linking.openURL(item.url);
   };
@@ -154,6 +197,7 @@ function SocialBody({ item, openLabel }: { item: MemoryItem; openLabel: string }
         </Text>
       ) : null}
       {item.parseIncomplete ? <Incomplete item={item} /> : null}
+      <NoteField value={item.note} onChange={onNote} />
       {item.url ? (
         <Pressable style={s.cta} onPress={open}>
           <Text style={s.ctaText}>{openLabel}</Text>
@@ -246,6 +290,18 @@ const s = StyleSheet.create({
   quiet: { fontFamily: font, fontSize: 12, color: colors.muted },
   body: { padding: 16, paddingBottom: 40, gap: 12 },
   article: { fontFamily: font, fontSize: 17, lineHeight: 26, color: colors.ink, minHeight: 200 },
+  note: {
+    minHeight: 72,
+    borderWidth: 1.5,
+    borderColor: colors.line,
+    borderRadius: 12,
+    padding: 10,
+    fontFamily: font,
+    fontSize: 15,
+    lineHeight: 22,
+    color: colors.ink,
+    textAlignVertical: 'top',
+  },
   hero: { width: '100%', height: 220, borderRadius: 14, backgroundColor: colors.faint },
   copy: { fontFamily: font, fontSize: 16, lineHeight: 24, color: colors.ink },
   meta: { fontFamily: font, fontSize: 13, color: colors.muted },

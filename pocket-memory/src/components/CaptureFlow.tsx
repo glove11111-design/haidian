@@ -184,6 +184,36 @@ export function AudioComposer({
   );
 }
 
+export function NoteSheet({
+  onSkip,
+  onSave,
+}: {
+  onSkip: () => void;
+  onSave: (note: string) => void;
+}) {
+  const [note, setNote] = useState('');
+  return (
+    <ComposerShell title="已收下" onClose={onSkip}>
+      <Text style={s.hint}>补一句为什么收，免得以后忘。可跳过。</Text>
+      <TextInput
+        value={note}
+        onChangeText={setNote}
+        placeholder="比如：这盏灯的颜色以后想用"
+        placeholderTextColor={colors.muted}
+        multiline
+        autoFocus
+        style={s.area}
+      />
+      <Pressable style={s.save} onPress={() => onSave(note.trim())}>
+        <Text style={s.saveText}>{note.trim() ? '写好了' : '先不写'}</Text>
+      </Pressable>
+      <Pressable style={s.cancel} onPress={onSkip}>
+        <Text style={s.quiet}>跳过</Text>
+      </Pressable>
+    </ComposerShell>
+  );
+}
+
 function ComposerShell({
   title,
   onClose,

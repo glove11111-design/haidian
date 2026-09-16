@@ -7,6 +7,7 @@ import { CaptureLayer } from './src/components/CaptureBar';
 import {
   AudioComposer,
   LinkComposer,
+  NoteSheet,
   PermissionNote,
   PhotoChoice,
   TextComposer,
@@ -31,7 +32,8 @@ type CaptureOverlay =
   | 'link'
   | 'audio'
   | 'settings'
-  | 'permission';
+  | 'permission'
+  | 'note';
 
 function Root() {
   const { items, ingest, ingestMany, updateItem } = useStore();
@@ -43,13 +45,35 @@ function Root() {
   const [permissionMessage, setPermissionMessage] = useState('');
   const [detailId, setDetailId] = useState<string | null>(null);
   const [categoryItemId, setCategoryItemId] = useState<string | null>(null);
+  const [noteItemIds, setNoteItemIds] = useState<string[]>([]);
 
-  const afterCapture = useCallback(() => {
+  const landInLibrary = useCallback(() => {
     setTab('library');
     setTypeFilter('all');
     setCategoryFilter(null);
-    setCapture('none');
   }, []);
+
+  const afterCapture = useCallback(() => {
+    landInLibrary();
+    setCapture('none');
+  }, [landInLibrary]);
+
+  const askNote = useCallback(
+    (ids: string[]) => {
+      landInLibrary();
+      setNoteItemIds(ids);
+      setCapture('note');
+    },
+    [landInLibrary],
+  );
+
+  const saveNote = async (note: string) => {
+    if (note) {
+      await Promise.all(noteItemIds.map((id) => updateItem(id, { note })));
+    }
+    setNoteItemIds([]);
+    setCapture('none');
+  };
 
   const openItem = (item: MemoryItem) => setDetailId(item.id);
   const changeCat = (item: MemoryItem) => setCategoryItemId(item.id);
@@ -114,14 +138,14 @@ function Root() {
       setCapture('none');
       return;
     }
-    await ingestMany(
+    const created = await ingestMany(
       result.assets.map((asset) => ({
         type: 'image' as const,
         mediaUri: asset.uri,
         thumbnailUri: asset.thumbnailUri,
       })),
     );
-    afterCapture();
+    askNote(created.map((it) => it.id));
   };
 
   const captureVideo = async () => {
@@ -138,14 +162,14 @@ function Root() {
       setCapture('none');
       return;
     }
-    await ingest({
+    const created = await ingest({
       type: 'video',
       videoKind: 'own',
       mediaUri: result.asset.uri,
       thumbnailUri: result.asset.thumbnailUri,
       durationMs: result.asset.durationMs,
     });
-    afterCapture();
+    askNote([created.id]);
   };
 
   const detailItem = items.find((it) => it.id === detailId);
@@ -209,9 +233,19 @@ function Root() {
       {capture === 'permission' && (
         <PermissionNote message={permissionMessage} onClose={() => setCapture('none')} />
       )}
+      {capture === 'note' && (
+        <NoteSheet
+          onSkip={() => {
+            setNoteItemIds([]);
+            setCapture('none');
+          }}
+          onSave={(note) => void saveNote(note)}
+        />
+      )}
       {capture === 'settings' && <SettingsScreen onClose={() => setCapture('none')} />}
       {detailItem && (
         <DetailScreen
+          key={detailItem.id}
           item={detailItem}
           onClose={() => setDetailId(null)}
           onCategory={() => setCategoryItemId(detailItem.id)}

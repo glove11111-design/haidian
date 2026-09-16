@@ -138,6 +138,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         if (!current || !current.classifying) return prev;
         const name = classifyItem(current);
         const categoryId = categoryIdByName(categoriesRef.current, name);
+        if (current.categoryManual) {
+          const next = prev.map((x) => (x.id === id ? { ...x, classifying: false } : x));
+          persistLocal({ items: next });
+          return next;
+        }
         const next = prev.map((x) =>
           x.id === id ? { ...x, classifying: false, categoryId } : x,
         );
@@ -179,10 +184,16 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const updateItem = useCallback(async (id: string, patch: Partial<MemoryItem>) => {
     const next = itemsRef.current.map((it) => (it.id === id ? { ...it, ...patch } : it));
-    setItems(next);
-    persistLocal({ items: next });
-    void pushCloud(next, categoriesRef.current);
-  }, [persistLocal, pushCloud]);
+    const current = next.find((it) => it.id === id);
+    const shouldReclassify = patch.note !== undefined && !!current && !current.categoryManual;
+    const withFlag = shouldReclassify
+      ? next.map((it) => (it.id === id ? { ...it, classifying: true } : it))
+      : next;
+    setItems(withFlag);
+    persistLocal({ items: withFlag });
+    void pushCloud(withFlag, categoriesRef.current);
+    if (shouldReclassify) scheduleClassify(id);
+  }, [persistLocal, pushCloud, scheduleClassify]);
 
   const deleteItem = useCallback(async (id: string) => {
     const next = itemsRef.current.filter((it) => it.id !== id);
@@ -193,7 +204,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const setCategory = useCallback(async (itemId: string, categoryId: string) => {
     const next = itemsRef.current.map((it) =>
-      it.id === itemId ? { ...it, categoryId, classifying: false } : it,
+      it.id === itemId ? { ...it, categoryId, classifying: false, categoryManual: true } : it,
     );
     setItems(next);
     persistLocal({ items: next });
@@ -217,7 +228,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     let nextItems = itemsRef.current;
     if (applyToItemId) {
       nextItems = itemsRef.current.map((it) =>
-        it.id === applyToItemId ? { ...it, categoryId: cat.id, classifying: false } : it,
+        it.id === applyToItemId
+          ? { ...it, categoryId: cat.id, classifying: false, categoryManual: true }
+          : it,
       );
       setItems(nextItems);
     }
@@ -274,7 +287,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     return itemsRef.current.filter((it) => {
       if (categoryId && it.categoryId !== categoryId) return false;
       if (!q) return true;
-      const hay = [it.text, it.caption, it.title, it.author, it.transcript, it.url, it.sourceApp]
+      const hay = [it.text, it.caption, it.note, it.title, it.author, it.transcript, it.url, it.sourceApp]
         .filter(Boolean)
         .join('\n')
         .toLowerCase();

@@ -20,6 +20,7 @@ export interface MemoryItem {
   createdAt: number;
   categoryId: string;
   classifying: boolean;
+  categoryManual?: boolean;
   syncStatus: SyncStatus;
   text?: string;
   mediaUri?: string;
@@ -31,6 +32,7 @@ export interface MemoryItem {
   url?: string;
   title?: string;
   caption?: string;
+  note?: string;
   author?: string;
   sourceApp?: string;
   coverUri?: string;

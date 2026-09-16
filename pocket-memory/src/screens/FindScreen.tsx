@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { CaptureBar } from '../components/CaptureBar';
-import { ChipRow, Pill } from '../components/Chips';
+import { ChipRow, GhostBtn, Pill } from '../components/Chips';
+import { DigestSheet } from '../components/DigestSheet';
 import { EmptyCategory, EmptySearch } from '../components/EmptyStates';
 import { MixedCard } from '../components/ItemViews';
 import { useStore } from '../store';
@@ -20,6 +21,7 @@ export function FindScreen({
   const { categories, search } = useStore();
   const [query, setQuery] = useState('');
   const [categoryId, setCategoryId] = useState<string | null>(null);
+  const [digestOpen, setDigestOpen] = useState(false);
   const results = useMemo(() => search(query, categoryId), [search, query, categoryId]);
   const scanning = !!categoryId && !query.trim();
   const searching = !!query.trim();
@@ -28,12 +30,13 @@ export function FindScreen({
     <View style={s.page}>
       <View style={s.head}>
         <Text style={s.title}>找</Text>
+        <GhostBtn label="整理" onPress={() => setDigestOpen(true)} />
       </View>
       <View style={s.searchWrap}>
         <TextInput
           value={query}
           onChangeText={setQuery}
-          placeholder="搜正文、文案、作者、标题"
+          placeholder="搜正文、备注、文案、作者、标题"
           placeholderTextColor={colors.muted}
           style={s.search}
         />
@@ -50,6 +53,13 @@ export function FindScreen({
           ))}
         </ChipRow>
       </View>
+      {searching ? (
+        <Pressable style={s.digestBar} onPress={() => setDigestOpen(true)}>
+          <Text style={s.digestBarText}>
+            把「{query.trim()}」相关的 {results.length} 条整理成浅读
+          </Text>
+        </Pressable>
+      ) : null}
       <View style={s.feed}>
         {searching && results.length === 0 && <EmptySearch onClear={() => setQuery('')} />}
         {scanning && results.length === 0 && (
@@ -64,18 +74,33 @@ export function FindScreen({
         )}
         {!searching && !scanning && results.length === 0 && (
           <View style={s.hintBox}>
-            <Text style={s.hint}>输入关键词，或按类目扫</Text>
+            <Text style={s.hint}>输入关键词，或按类目扫。整理可以归堆并给浅读。</Text>
           </View>
         )}
       </View>
       <CaptureBar onPick={onCapture} />
+      {digestOpen && (
+        <DigestSheet
+          initialTopic={query}
+          categoryId={categoryId}
+          onClose={() => setDigestOpen(false)}
+          onOpen={onOpen}
+        />
+      )}
     </View>
   );
 }
 
 const s = StyleSheet.create({
   page: { flex: 1 },
-  head: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 8 },
+  head: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   title: { fontFamily: font, fontSize: 32, fontWeight: '700', color: colors.ink },
   searchWrap: { paddingHorizontal: 16, marginBottom: 10 },
   search: {
@@ -88,7 +113,9 @@ const s = StyleSheet.create({
     fontSize: 16,
   },
   chips: { paddingLeft: 16, marginBottom: 8 },
+  digestBar: { paddingHorizontal: 16, paddingBottom: 8 },
+  digestBarText: { fontFamily: font, fontSize: 13, color: colors.ink, textDecorationLine: 'underline' },
   feed: { flex: 1, paddingHorizontal: 16 },
   hintBox: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  hint: { fontFamily: font, fontSize: 15, color: colors.muted },
+  hint: { fontFamily: font, fontSize: 15, color: colors.muted, textAlign: 'center', paddingHorizontal: 24 },
 });
